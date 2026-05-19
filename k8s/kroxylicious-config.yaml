@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kroxylicious-config
+data:
+  config.yaml: |
+    proxy:
+      address: 0.0.0.0:9092
+    clusters:
+      cluster-a:
+        bootstrap_servers: cluster-a-kafka-bootstrap:9092
+      cluster-b:
+        bootstrap_servers: cluster-b-kafka-bootstrap:9092
+    filters:
+    - type: io.kroxylicious.gateway.filter.routing.MultiClusterRoutingFilterFactory
+      config:
+        topicToClusterMap:
+          topic1: cluster-a
+          topic2: cluster-b

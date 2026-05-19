@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kroxylicious-gateway
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: kroxylicious
+  template:
+    metadata:
+      labels:
+        app: kroxylicious
+    spec:
+      containers:
+      - name: kroxylicious
+        image: quay.io/kroxylicious/kroxylicious:latest
+        ports:
+        - containerPort: 9092
+        volumeMounts:
+        - name: config
+          mountPath: /opt/kroxylicious/config
+      volumes:
+      - name: config
+        configMap:
+          name: kroxylicious-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kroxylicious-gateway
+spec:
+  selector:
+    app: kroxylicious
+  ports:
+  - protocol: TCP
+    port: 9092
+    targetPort: 9092
+  type: LoadBalancer
