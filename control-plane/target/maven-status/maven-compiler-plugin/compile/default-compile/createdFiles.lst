@@ -1,5 +1,0 @@
-io/kroxylicious/gateway/controlplane/ControlPlaneApplication.class
-io/kroxylicious/gateway/controlplane/model/TopicMapping.class
-io/kroxylicious/gateway/controlplane/service/MigrationService.class
-io/kroxylicious/gateway/controlplane/controller/TopicController.class
-io/kroxylicious/gateway/controlplane/model/TopicMappingRepository.class

@@ -12,8 +12,8 @@ This project provides an eventing gateway solution based on [Kroxylicious](https
 - **Transparent Client Switching**: Producers and consumers connect to the gateway and are automatically routed to the correct backend cluster without client-side configuration changes.
 
 ## Architecture
-- **Data Plane**: Kroxylicious proxy with a custom `MultiClusterRouting` filter.
-- **Control Plane**: A REST API service that manages topic-to-cluster mappings and interacts with Kafka clusters and MirrorMaker.
+- **Data Plane**: Kroxylicious proxy with a custom `MultiClusterRoutingFilter` filter, connecting to **AWS MSK** clusters.
+- **Control Plane**: A REST API service using **AWS DynamoDB** for persistence, managing topic-to-cluster mappings and orchestrating MirrorMaker.
 - **UI**: A web dashboard for topic onboarding and cluster management.
 - **Schema Registry**: Integrated with the control plane for schema management.
 

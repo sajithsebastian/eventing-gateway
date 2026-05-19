@@ -8,9 +8,9 @@ data:
       address: 0.0.0.0:9092
     clusters:
       cluster-a:
-        bootstrap_servers: cluster-a-kafka-bootstrap:9092
+        bootstrap_servers: msk-cluster-a.example.com:9092
       cluster-b:
-        bootstrap_servers: cluster-b-kafka-bootstrap:9092
+        bootstrap_servers: msk-cluster-b.example.com:9092
     filters:
     - type: io.kroxylicious.gateway.filter.routing.MultiClusterRoutingFilterFactory
       config:

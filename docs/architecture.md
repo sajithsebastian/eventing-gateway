@@ -5,18 +5,20 @@
 ### 1. Data Plane (Kroxylicious Proxy)
 The data plane is powered by **Kroxylicious**, a Kafka protocol-aware proxy. It serves as the single entry point for all Kafka clients (producers and consumers).
 
-- **MultiClusterRoutingFilter**: A custom filter that inspects incoming Kafka requests. It identifies the topic being accessed and routes the request to the appropriate backend Kafka cluster based on a dynamic routing table.
+- **AWS MSK Integration**: The gateway connects to multiple **AWS MSK (Managed Streaming for Kafka)** clusters as backend clusters.
+- **MultiClusterRoutingFilter**: A custom filter that inspects incoming Kafka requests. It identifies the topic being accessed and routes the request to the appropriate backend MSK cluster based on a dynamic routing table.
 - **Dynamic Configuration**: The proxy receives its routing table from the Control Plane.
 
 ### 2. Control Plane
 The Control Plane is a Spring Boot-based management service.
 
-- **Topic Management**: Maintains a mapping of topics to their "primary" Kafka clusters.
-- **Cluster Management**: Keeps track of available backend Kafka clusters.
-- **Schema Registration**: Integrates with a Schema Registry (e.g., Karapace or Confluent) to ensure schemas are available across clusters.
+- **AWS DynamoDB Backend**: Uses **AWS DynamoDB** for high-scale, reliable persistence of topic-to-cluster mappings and cluster metadata.
+- **Topic Management**: Maintains a mapping of topics to their "primary" MSK clusters.
+- **Cluster Management**: Keeps track of available backend MSK clusters.
+- **Schema Registration**: Integrates with AWS Glue Schema Registry or other providers to ensure schemas are available across clusters.
 - **Orchestration**: When a topic's primary cluster is switched, the Control Plane:
     1. Updates the routing table in the Data Plane.
-    2. Provisions MirrorMaker 2 (MM2) connectors to replicate data from the old primary to the new primary cluster.
+    2. Provisions MirrorMaker 2 (MM2) connectors (running on MSK Connect or K8s) to replicate data from the old primary to the new primary cluster.
     3. Handles the lifecycle of these MM2 bridges.
 
 ### 3. Control Plane UI
