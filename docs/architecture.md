@@ -3,11 +3,12 @@
 ## Components
 
 ### 1. Data Plane (Kroxylicious Proxy)
-The data plane is powered by **Kroxylicious**, a Kafka protocol-aware proxy. It serves as the single entry point for all Kafka clients (producers and consumers).
+The data plane is powered by **Kroxylicious**, utilizing a "Bootstrap Router" model to support multi-cluster routing with per-backend mTLS.
 
-- **AWS MSK Integration**: The gateway connects to multiple **AWS MSK (Managed Streaming for Kafka)** clusters as backend clusters.
-- **MultiClusterRoutingFilter**: A custom filter that inspects incoming Kafka requests. It identifies the topic being accessed and routes the request to the appropriate backend MSK cluster based on a dynamic routing table.
-- **Dynamic Configuration**: The proxy receives its routing table from the Control Plane.
+- **Bootstrap Router Virtual Cluster**: All clients initially connect to a single "Bootstrap" virtual cluster.
+- **Backend Virtual Clusters**: Each backend Kafka cluster (e.g., separate AWS MSK clusters) is represented as a separate Kroxylicious `virtualCluster`. This allows each backend to have its own unique mTLS configuration, including certificates and truststores.
+- **MultiClusterRoutingFilter**: This filter resides in the Bootstrap Virtual Cluster. It intercepts `MetadataResponse` messages. Based on the topic-to-cluster mapping, it rewrites the broker endpoints in the response to point the client at the appropriate Backend Virtual Cluster endpoint.
+- **Dynamic Configuration**: The gateway configuration is dynamically updated by the Control Plane to include new backend clusters and their mTLS credentials.
 
 ### 2. Control Plane
 The Control Plane is a Spring Boot-based management service.
@@ -33,11 +34,16 @@ Used for data replication during topic migration. It ensures that when a topic m
 
 ## Data Flows
 
-### Normal Operation
-1. A Kafka client connects to the Kroxylicious Gateway.
-2. The client sends a `MetadataRequest` to find the leader for a topic.
-3. The `MultiClusterRoutingFilter` intercepts the request, looks up the topic's primary cluster, and proxies the request to that cluster.
-4. Subsequent `Produce` or `Fetch` requests are similarly routed to the correct backend cluster.
+### Normal Operation (Metadata-based Routing)
+1. A Kafka client connects to the **Bootstrap Virtual Cluster** endpoint.
+2. The client sends a `MetadataRequest` for a specific topic.
+3. The `MultiClusterRoutingFilter` allows the request to pass to a default upstream or handles it internally.
+4. When the `MetadataResponse` returns, the filter:
+    a. Identifies the primary cluster for each requested topic.
+    b. Rewrites the `brokers` list in the response, replacing the actual backend broker addresses with the public endpoint of the corresponding **Backend Virtual Cluster**.
+5. The Kafka client receives the response and connects to the returned endpoint.
+6. Since the endpoint belongs to a Backend Virtual Cluster, Kroxylicious handles the specific mTLS handshake required for that backend.
+7. Subsequent `Produce` or `Fetch` requests go directly through the Backend Virtual Cluster to the target Kafka cluster.
 
 ### Topic Migration Workflow
 1. **Initiation**: User requests a topic migration from Cluster A to Cluster B via the UI.

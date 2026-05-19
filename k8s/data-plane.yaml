@@ -17,6 +17,8 @@ spec:
         image: quay.io/kroxylicious/kroxylicious:latest
         ports:
         - containerPort: 9092
+        - containerPort: 9093
+        - containerPort: 9094
         volumeMounts:
         - name: config
           mountPath: /opt/kroxylicious/config
@@ -33,7 +35,16 @@ spec:
   selector:
     app: kroxylicious
   ports:
-  - protocol: TCP
+  - name: bootstrap
+    protocol: TCP
     port: 9092
     targetPort: 9092
+  - name: cluster-a
+    protocol: TCP
+    port: 9093
+    targetPort: 9093
+  - name: cluster-b
+    protocol: TCP
+    port: 9094
+    targetPort: 9094
   type: LoadBalancer

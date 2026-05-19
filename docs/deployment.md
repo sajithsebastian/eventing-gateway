@@ -35,7 +35,12 @@ docker build -t your-repo/control-plane:latest .
 Deploy the components to your EKS cluster using the manifests in the `k8s/` directory.
 
 ### Step 3a: Deploy Configuration
-Update `k8s/kroxylicious-config.yaml` with your MSK bootstrap servers.
+Update `k8s/kroxylicious-config.yaml` with your MSK bootstrap servers and ensure you have the appropriate mTLS certificates available in the proxy's certificate path.
+
+The configuration utilizes multiple **Virtual Clusters**:
+- **Bootstrap (Port 9092)**: Entry point for clients, handles topic-based routing.
+- **Backend Virtual Clusters (Ports 9093+)**: Dedicated clusters for each backend with specific mTLS settings.
+
 ```bash
 kubectl apply -f k8s/kroxylicious-config.yaml
 ```

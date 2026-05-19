@@ -6,14 +6,38 @@ data:
   config.yaml: |
     proxy:
       address: 0.0.0.0:9092
-    clusters:
+    virtualClusters:
+      bootstrap:
+        targetCluster: cluster-a
+        gateways:
+          - port: 9092
+        filters:
+          - type: io.kroxylicious.gateway.filter.routing.MultiClusterRoutingFilterFactory
+            config:
+              topicToClusterMap:
+                topic1: cluster-a
+                topic2: cluster-b
+              clusterToEndpoints:
+                cluster-a: kroxylicious-gateway:9093
+                cluster-b: kroxylicious-gateway:9094
       cluster-a:
-        bootstrap_servers: msk-cluster-a.example.com:9092
+        targetCluster: cluster-a-backend
+        gateways:
+          - port: 9093
+        # mTLS config for Cluster A
+        tls:
+          key:
+            storeFile: /opt/kroxylicious/certs/cluster-a.jks
       cluster-b:
+        targetCluster: cluster-b-backend
+        gateways:
+          - port: 9094
+        # mTLS config for Cluster B
+        tls:
+          key:
+            storeFile: /opt/kroxylicious/certs/cluster-b.jks
+    clusters:
+      cluster-a-backend:
+        bootstrap_servers: msk-cluster-a.example.com:9092
+      cluster-b-backend:
         bootstrap_servers: msk-cluster-b.example.com:9092
-    filters:
-    - type: io.kroxylicious.gateway.filter.routing.MultiClusterRoutingFilterFactory
-      config:
-        topicToClusterMap:
-          topic1: cluster-a
-          topic2: cluster-b

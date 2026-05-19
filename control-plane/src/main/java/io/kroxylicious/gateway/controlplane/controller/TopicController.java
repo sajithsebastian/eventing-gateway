@@ -4,6 +4,8 @@ import io.kroxylicious.gateway.controlplane.model.TopicMapping;
 import io.kroxylicious.gateway.controlplane.service.TopicMappingService;
 import io.kroxylicious.gateway.controlplane.service.MigrationService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -34,7 +36,7 @@ public class TopicController {
             mapping.setPrimaryCluster(targetCluster);
             return topicMappingService.save(mapping);
         }
-        return null;
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Topic not found");
     }
 
     @GetMapping

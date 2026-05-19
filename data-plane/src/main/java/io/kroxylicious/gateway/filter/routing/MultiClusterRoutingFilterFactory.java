@@ -16,10 +16,11 @@ public class MultiClusterRoutingFilterFactory implements FilterFactory<MultiClus
 
     @Override
     public Filter createFilter(FilterFactoryContext context, Config config) {
-        return new MultiClusterRoutingFilter(config.topicToClusterMap());
+        return new MultiClusterRoutingFilter(config.topicToClusterMap(), config.clusterToEndpoints());
     }
 
     public record Config(
-        @JsonProperty(required = true) Map<String, String> topicToClusterMap
+        @JsonProperty(required = true) Map<String, String> topicToClusterMap,
+        @JsonProperty(required = true) Map<String, String> clusterToEndpoints
     ) {}
 }
