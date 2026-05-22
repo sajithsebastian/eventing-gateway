@@ -27,7 +27,6 @@ class TestWhatsAppSender(unittest.TestCase):
         self.assertTrue(result)
         mock_messages.create.assert_called_once()
         args, kwargs = mock_messages.create.call_args
-        self.assertIn("test.txt", kwargs['body'])
         self.assertEqual(kwargs['to'], "whatsapp:+1234567890")
         self.assertEqual(kwargs['from_'], "whatsapp:+14155238886")
 

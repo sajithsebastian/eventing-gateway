@@ -21,8 +21,6 @@ class WhatsAppSender:
 
         try:
             # Twilio requires the media_url to be publicly accessible.
-            # Local files must be uploaded to a storage provider (like AWS S3) first.
-            # Users should configure their own upload logic here or provide a URL.
             media_url = os.getenv('MEDIA_BASE_URL')
 
             if media_url:

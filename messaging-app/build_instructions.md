@@ -24,5 +24,3 @@ This will generate `WhatsAppDispatcher.app` in the `dist/` directory.
 
 ## Note on OCR
 `easyocr` and `torch` are large libraries. The first time you run the compiled application, it may take some time to initialize as it might download the required OCR models to your home directory (`~/.EasyOCR/`).
-
-If you want to bundle the models with the app, you will need to add them to the `--add-data` flag in the PyInstaller command.
