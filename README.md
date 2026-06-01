@@ -30,4 +30,8 @@ This project provides an eventing gateway solution based on [Kroxylicious](https
 - `control-plane/`: API service for management.
 - `ui/`: Frontend dashboard.
 - `k8s/`: Kubernetes manifests and Helm charts.
-- `docs/`: Additional documentation.
+- `docs/`: Detailed project documentation including:
+  - [Architecture](docs/architecture.md)
+  - [PRD](docs/PRD.md)
+  - [Skills Matrix](docs/skills.md)
+  - [Deployment Guide](docs/deployment.md)
