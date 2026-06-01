@@ -1,5 +1,8 @@
 # Eventing Gateway Architecture
 
+## Vision
+The Eventing Gateway transforms Kafka from a collection of cluster endpoints into a managed **Proxy-as-a-Service**. It eliminates the complexity of client-side topic discovery and DR management by moving these responsibilities into a protocol-aware proxy layer.
+
 ## Components
 
 ### 1. Data Plane (Kroxylicious Proxy)

@@ -1,0 +1,3 @@
+io/kroxylicious/gateway/filter/routing/MultiClusterRoutingFilterFactory$Config.class
+io/kroxylicious/gateway/filter/routing/MultiClusterRoutingFilter.class
+io/kroxylicious/gateway/filter/routing/MultiClusterRoutingFilterFactory.class
